@@ -5,6 +5,8 @@ First, download the desired Wiktionary dump, from [this repository](https://dump
 
  * [English](https://dumps.wikimedia.org/enwiktionary/latest/enwiktionary-latest-pages-articles.xml.bz2)
  * [French](https://dumps.wikimedia.org/frwiktionary/latest/frwiktionary-latest-pages-articles.xml.bz2)
+ * [German](https://dumps.wikimedia.org/dewiktionary/latest/dewiktionary-latest-pages-articles.xml.bz2)
+ * [Italian](https://dumps.wikimedia.org/itwiktionary/latest/itwiktionary-latest-pages-articles.xml.bz2)
 
 Then, run the following command to extract the raw IPA data:
 

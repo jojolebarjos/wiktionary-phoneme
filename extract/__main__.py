@@ -7,6 +7,7 @@ import regex as re
 from tqdm import tqdm
 
 from . import (
+    get_cleaner,
     get_parser,
     extract,
 )
@@ -16,6 +17,7 @@ parser = argparse.ArgumentParser(description="Extract IPA from Wiktionary dump")
 parser.add_argument("input")
 parser.add_argument("output")
 parser.add_argument("--language", "-l", nargs="?", help="Wikipedia language code")
+parser.add_argument("--raw", "-r", action="store_true", help="Disable cleaning procedure")
 
 args = parser.parse_args()
 
@@ -28,4 +30,9 @@ if args.language is None:
 
 parse = get_parser(args.language)
 
-extract(parse, args.input, args.output)
+if args.raw:
+    clean = None
+else:
+    clean = get_cleaner(args.language)
+
+extract(args.input, args.output, parse, clean)

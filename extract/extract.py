@@ -9,7 +9,7 @@ from . import (
 )
 
 
-def extract(parse, input_file, output_file):
+def extract(input_file, output_file, parse, clean=None):
 
     # Make sure we got a file object as input
     if isinstance(input_file, str):
@@ -28,6 +28,16 @@ def extract(parse, input_file, output_file):
 
         # Do the thing
         with output_file:
+            output_file.write("text\tlanguage\tpronunciation\n")
             for title, content in iterate_dump(input_file):
                 for text, language, pronunciation in parse(title, content):
+
+                    # Apply cleaning, if any
+                    if clean is not None:
+                        result = clean(text, language, pronunciation)
+                        if result is None:
+                            continue
+                        text, language, pronunciation = result
+
+                    # Write entry
                     output_file.write(f"{text}\t{language}\t{pronunciation}\n")
