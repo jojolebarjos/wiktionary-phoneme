@@ -1,0 +1,5 @@
+*.pyc
+*.tsv
+*.xml
+*.bz2
+.ipynb_checkpoints/
