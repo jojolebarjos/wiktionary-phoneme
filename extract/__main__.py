@@ -4,24 +4,12 @@ import io
 
 import regex as re
 
+from tqdm import tqdm
+
 from . import (
     get_parser,
-    iterate_dump,
+    extract,
 )
-
-
-def process(parse, input_file, output_file):
-
-    if isinstance(output_file, str):
-        output_file = io.open(output_file, "w", encoding="utf-8", newline="\n")
-
-    try:
-        for title, content in iterate_dump(input_file):
-            for text, language, pronunciation in parse(title, content):
-                output_file.write(f"{text}\t{language}\t{pronunciation}\n")
-
-    finally:
-        output_file.close()
 
 
 parser = argparse.ArgumentParser(description="Extract IPA from Wiktionary dump")
@@ -31,6 +19,7 @@ parser.add_argument("--language", "-l", nargs="?", help="Wikipedia language code
 
 args = parser.parse_args()
 
+# Try to infer language from name
 if args.language is None:
     match = re.match(r'^(\w+)wiktionary', args.input)
     if not match:
@@ -39,4 +28,4 @@ if args.language is None:
 
 parse = get_parser(args.language)
 
-process(parse, args.input, args.output)
+extract(parse, args.input, args.output)
