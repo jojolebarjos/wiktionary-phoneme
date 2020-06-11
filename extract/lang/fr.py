@@ -46,7 +46,12 @@ import regex as re
 #   {{phon|ʁɛ̃ːn|fr}}
 #
 # Finally, note that some expansion might be attached:
+#   '''al''' {{prononcé|année-lumière|fr}} {{pron|a.ne ly.mjɛʁ|fr}} {{f}}.
 #   '''cf.''' {{pron|kɔ̃.fɛʁ|fr}} {{prononcé|confère|fr}} <small>ou</small> {{pron|se.ɛf|fr}} {{invar}}
+#   :* '''cinq minutes''' {{pron|sɛ̃ mi.nyt|fr}}
+#
+# And that some of them are not desired:
+#   * '''cantonnais''' {{pron|sɛːŋ⁵⁵|yue}},
 #
 
 
@@ -95,11 +100,45 @@ import regex as re
 #  * Audio clips often add alternative pronunciations, and sometimes a slight variation (i.e. titre)
 #
 
-pron_long_r = re.compile(r"'''([^\{]*)'''\s*\{\{pron\|([^\|]*)\|([^\}]*)\}\}")
+pron_long_r = re.compile(r"^\s*'''([^\{]*)'''\s*\{\{pron\|([^\|]*)\|([^\}]*)\}\}")
+# TODO handle {{prononcé
+
+comment_r = re.compile(r"<!\-\-.*?\-\->", re.DOTALL)
+bracket_r = re.compile(r"\{\{|\}\}")
+ecouter_r = re.compile(r"\{\{écouter\|")
+
+# TODO écouter
+# TODO get regional pronunciation
 
 
 def parse(title, content):
 
+    # First, strip any HTML/XML comment
+    content = comment_r.sub("", content)
+
+    # Then, collect using various strategies
+    results = set()
+    for text, language, pronunciation in from_any(title, content):
+
+        # Basic cleaning
+        text = text.strip()
+        language = language.strip()
+        pronunciation = pronunciation.strip()
+
+        # Only keep complete results
+        if text and language and pronunciation:
+            result = text, language, pronunciation
+            results.add(result)
+
+    return results
+
+
+def from_any(title, content):
+    yield from from_entries(title, content)
+    yield from from_audio_clips(title, content)
+
+
+def from_entries(title, content):
     for line in content.split("\n"):
 
         match = pron_long_r.search(line)
@@ -108,3 +147,44 @@ def parse(title, content):
             pronunciation = match.group(2)
             language = match.group(3)
             yield text, language, pronunciation
+
+
+def from_audio_clips(title, content):
+    # TODO parse audio clips
+    return []
+
+
+def iterate_audio_clips(content):
+    """Iterate over ``{{écouter|...}}`` templates."""
+
+    pos = 0
+    while True:
+
+        # Search for next clip
+        match = ecouter_r.search(content, pos=pos)
+        if not match:
+            break
+
+        # As there might be nested templates, and also multiple clips on the
+        # same line, we need to count opening and closing brackets
+        start = match.start()
+        pos = match.end()
+        depth = 1
+        while depth > 0:
+            bracket = bracket_r.search(content, pos=pos)
+
+            # Maybe the template is not properly closed
+            if not bracket:
+                pos = len(content)
+                break
+
+            # Move forward
+            pos = bracket.end()
+            bracket = bracket.group()
+            if bracket == "{{":
+                depth += 1
+            else:
+                depth -= 1
+
+        end = pos
+        yield content[start:end]
