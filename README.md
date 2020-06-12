@@ -29,5 +29,4 @@ fr_df = pd.read_csv("fr.tsv", sep="\t", na_filter=False)
 
 sorted_fr_df = fr_df.sort_values(["text", "pronunciation", "language"]).drop_duplicates()
 sorted_fr_df.to_csv("fr.sorted.tsv", index=False, sep="\t", encoding="utf-8", line_terminator="\n")
-
 ```

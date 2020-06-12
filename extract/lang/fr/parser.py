@@ -144,13 +144,11 @@ def from_any(title, content):
     """Collect from relevant templates."""
 
     yield from from_entries(title, content)
-    yield from from_audio_clips(title, content)
+    #yield from from_audio_clips(title, content)
 
 
 def from_entries(title, content):
     """Iterate over ``'''...''' {{p...|...|...}}`` templates."""
-
-    return
 
     # Check each line separately
     for line in content.split("\n"):
