@@ -42,8 +42,9 @@ import regex as re
 #   Encore parfois prononcé irrégulièrement {{pron|mɛ.kʁə.di|fr}}
 #   '''travail''' {{pron|ˈtʁæ.veɪl|en}} ou {{pron|tɹə.ˈveɪl|en}}
 #
-# Note that a close template is used in the same way:
+# Note that close templates are used in the same way:
 #   {{phon|ʁɛ̃ːn|fr}}
+#   '''miellat''' {{phono|ˈmie̯lːɑt|se}} 
 #
 # Finally, note that some expansion might be attached:
 #   '''al''' {{prononcé|année-lumière|fr}} {{pron|a.ne ly.mjɛʁ|fr}} {{f}}.
@@ -100,14 +101,20 @@ import regex as re
 #  * Audio clips often add alternative pronunciations, and sometimes a slight variation (i.e. titre)
 #
 
-pron_long_r = re.compile(r"^\s*'''([^\{]*)'''\s*\{\{pron\|([^\|]*)\|([^\}]*)\}\}")
-# TODO handle {{prononcé
 
+#
+# See
+#   https://fr.wiktionary.org/wiki/Mod%C3%A8le:prononciation
+#   https://fr.wiktionary.org/wiki/Mod%C3%A8le:%C3%A9couter
+#
+
+pron_long_r = re.compile(r"^\s*'''([^\{]*)'''\s*\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}")
 comment_r = re.compile(r"<!\-\-.*?\-\->", re.DOTALL)
 bracket_r = re.compile(r"\{\{|\}\}")
 ecouter_r = re.compile(r"\{\{écouter\|")
+template_r = re.compile(r"\{\{[^\}]*\}\}")
+argument_r = re.compile(r"(\w*)=(.*)")
 
-# TODO écouter
 # TODO get regional pronunciation
 
 
@@ -134,15 +141,27 @@ def parse(title, content):
 
 
 def from_any(title, content):
+    """Collect from relevant templates."""
+
     yield from from_entries(title, content)
     yield from from_audio_clips(title, content)
 
 
 def from_entries(title, content):
-    for line in content.split("\n"):
+    """Iterate over ``'''...''' {{p...|...|...}}`` templates."""
 
+    return
+
+    # Check each line separately
+    for line in content.split("\n"):
         match = pron_long_r.search(line)
         if match is not None:
+
+            # Ignore the ones that are not pronounced in an obvious way (about 25 entries at the time of writing)
+            if "{{prononcé|" in line:
+                continue
+
+            # Collect entry
             text = match.group(1)
             pronunciation = match.group(2)
             language = match.group(3)
@@ -150,12 +169,18 @@ def from_entries(title, content):
 
 
 def from_audio_clips(title, content):
-    # TODO parse audio clips
-    return []
+    """Iterate over ``{{écouter|...}}`` templates."""
+
+    for chunk in iterate_audio_clips(content):
+        result = parse_audio_clip(title, chunk)
+        if result is not None:
+            yield result
+
+
+# TODO refactor markup parsing methods to be more general
 
 
 def iterate_audio_clips(content):
-    """Iterate over ``{{écouter|...}}`` templates."""
 
     pos = 0
     while True:
@@ -187,4 +212,35 @@ def iterate_audio_clips(content):
                 depth -= 1
 
         end = pos
-        yield content[start:end]
+        chunk = content[start:end]
+        yield chunk
+
+
+def parse_audio_clip(title, chunk):
+
+    # Ignore header and tail
+    inner = chunk[10:-2]
+
+    # Ignore template, as they are usually not related to the field we need
+    inner = template_r.sub("", inner)
+
+    # Get arguments
+    index = 0
+    kwargs = {}
+    for part in inner.split('|'):
+        match = argument_r.fullmatch(part)
+        if match is None:
+            index += 1
+            kwargs[str(index)] = part
+        else:
+            kwargs[match.group(1)] = match.group(2)
+
+    # Resolve arguments
+    pronunciation = kwargs.get("2") or kwargs.get("pron")
+    language = kwargs.get("3") or kwargs.get("lang")
+    text = kwargs.get("titre") or title
+
+    # Validate
+    if pronunciation and language:
+        return text, language, pronunciation
+    return None
