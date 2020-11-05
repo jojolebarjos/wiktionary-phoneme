@@ -56,6 +56,107 @@ def clean_text(text):
     return text
 
 
+# Mapping with Universal Dependencies Part-of-Speech tags
+TAGS = {
+    "ADJ": {
+        "adj",
+        "adj-excl",
+        "adjectif",
+        "adjectif démonstratif",
+        "adjectif exclamatif",
+        "adjectif indéfini",
+        "adjectif interrogatif",
+        "adjectif possessif",
+        "adjectif relatif",
+    },
+    "ADP": {
+        "particule",
+        "particule numérale",
+        "postposition",
+        "prép",
+        "préposition",
+    },
+    "ADV": {
+        "adv",
+        "adv-pron",
+        "adverbe",
+        "adverbe indéfini",
+        "adverbe interrogatif",
+        "adverbe pronominal",
+        "adverbe relatif",
+    },
+    "CCONJ": {
+        "conjonction de coordination",
+    },
+    "DET": {
+        "article",
+        "article défini",
+        "article indéfini",
+        "article partitif",
+        "déterminant",
+    },
+    "INTJ": {
+        "interj",
+        "interjection",
+        "onom",
+        "onomatopée",
+    },
+    "NOUN": {
+        "nom",
+        "nom commun",
+        "nom scientifique",
+    },
+    "NUM": {
+        "adjectif numéral",
+        "adj-num",
+        "numéral",
+    },
+    "PART": {
+        # Not meaningful as a stand-alone word
+    },
+    "PRON": {
+        "pronom",
+        "pronom démonstratif",
+        "pronom indéfini",
+        "pronom interrogatif",
+        "pronom personnel",
+        "pronom possessif",
+        "pronom relatif",
+        "pronom-indéf",
+    },
+    "PROPN": {
+        "nom propre",
+        "nom-pr",
+        "nom de famille",
+        "nom-fam",
+        "prénom",
+    },
+    "PUNCT": {
+        # Tagged as SYM, as Wiktionary do not differentiate between them
+    },
+    "SCONJ": {
+        "conj": "",
+        "conjonction": "",
+    },
+    "SYM": {
+        "lettre",
+        "symbole",
+        "sinogramme",
+        "dico sinogrammes",
+    },
+    "VERB": {
+        "verbe",
+        "verb",
+    },
+}
+
+# Invert mapping
+TAG_MAPPING = {v: k for k, vs in TAGS.items() for v in vs}
+
+def clean_tag(tag):
+    return TAG_MAPPING.get(tag.lower().strip(), "")
+
+
 IPA_REPLACEMENT = {
     
     # Ignore stress marker (not sufficiently used)
@@ -167,7 +268,7 @@ def clean_pronunciation(pronunciation):
     return pronunciation
 
 
-def clean(text, language, pronunciation):
+def clean(text, language, tag, pronunciation):
 
     # Currently ignoring anything that is not French
     if language != "fr":
@@ -178,9 +279,12 @@ def clean(text, language, pronunciation):
     if text is None:
         return None
 
+    # Clean tag
+    tag = clean_tag(tag)
+
     # Clean pronunciation
     pronunciation = clean_pronunciation(pronunciation)
     if pronunciation is None:
         return None
 
-    return text, language, pronunciation
+    return text, language, tag, pronunciation

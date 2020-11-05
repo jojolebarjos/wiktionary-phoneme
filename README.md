@@ -25,8 +25,9 @@ The output is easily loaded and processed using `pandas`:
 ```python
 import pandas as pd
 
-fr_df = pd.read_csv("fr.tsv", sep="\t", na_filter=False)
+df = pd.read_csv("fr.tsv", sep="\t", na_filter=False)
 
-sorted_fr_df = fr_df.sort_values(["text", "pronunciation", "language"]).drop_duplicates()
-sorted_fr_df.to_csv("fr.sorted.tsv", index=False, sep="\t", encoding="utf-8", line_terminator="\n")
+df = df.sort_values(["text", "pronunciation", "language"])
+df = df.drop_duplicates()
+df.to_csv("fr.sorted.tsv", index=False, sep="\t", encoding="utf-8", line_terminator="\n")
 ```

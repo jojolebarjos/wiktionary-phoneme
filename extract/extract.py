@@ -28,16 +28,16 @@ def extract(input_file, output_file, parse, clean=None):
 
         # Do the thing
         with output_file:
-            output_file.write("text\tlanguage\tpronunciation\n")
+            output_file.write("text\tlanguage\ttag\tpronunciation\n")
             for title, content in iterate_dump(input_file):
-                for text, language, pronunciation in parse(title, content):
+                for text, language, tag, pronunciation in parse(title, content):
 
                     # Apply cleaning, if any
                     if clean is not None:
-                        result = clean(text, language, pronunciation)
+                        result = clean(text, language, tag, pronunciation)
                         if result is None:
                             continue
-                        text, language, pronunciation = result
+                        text, language, tag, pronunciation = result
 
                     # Write entry
-                    output_file.write(f"{text}\t{language}\t{pronunciation}\n")
+                    output_file.write(f"{text}\t{language}\t{tag}\t{pronunciation}\n")

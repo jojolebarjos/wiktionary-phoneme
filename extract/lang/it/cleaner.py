@@ -1,4 +1,4 @@
 
-def clean(text, language, pronunciation):
+def clean(text, language, tag, pronunciation):
     # TODO
-    return text, language, pronunciation
+    return text, language, tag, pronunciation

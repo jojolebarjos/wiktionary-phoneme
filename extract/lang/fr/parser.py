@@ -108,6 +108,7 @@ import regex as re
 #   https://fr.wiktionary.org/wiki/Mod%C3%A8le:%C3%A9couter
 #
 
+h3_r = re.compile(r"^===\s*\{\{S\|([^\|\}]*)")
 pron_long_r = re.compile(r"^\s*'''([^\{]*)'''\s*\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}")
 comment_r = re.compile(r"<!\-\-.*?\-\->", re.DOTALL)
 bracket_r = re.compile(r"\{\{|\}\}")
@@ -125,16 +126,17 @@ def parse(title, content):
 
     # Then, collect using various strategies
     results = set()
-    for text, language, pronunciation in from_any(title, content):
+    for text, language, tag, pronunciation in from_any(title, content):
 
         # Basic cleaning
         text = text.strip()
         language = language.strip()
+        tag = tag.strip()
         pronunciation = pronunciation.strip()
 
         # Only keep complete results
         if text and language and pronunciation:
-            result = text, language, pronunciation
+            result = text, language, tag, pronunciation
             results.add(result)
 
     return results
@@ -151,7 +153,16 @@ def from_entries(title, content):
     """Iterate over ``'''...''' {{p...|...|...}}`` templates."""
 
     # Check each line separately
+    tag = ""
     for line in content.split("\n"):
+
+        # First, check if it is a level 3 header, to acquire tags
+        match = h3_r.match(line)
+        if match is not None:
+            tag = match.group(1)
+            continue
+
+        # Otherwise, check for any pronunciation
         match = pron_long_r.search(line)
         if match is not None:
 
@@ -163,11 +174,13 @@ def from_entries(title, content):
             text = match.group(1)
             pronunciation = match.group(2)
             language = match.group(3)
-            yield text, language, pronunciation
+            yield text, language, tag, pronunciation
 
 
 def from_audio_clips(title, content):
     """Iterate over ``{{écouter|...}}`` templates."""
+
+    # TODO need to detect tag
 
     for chunk in iterate_audio_clips(content):
         result = parse_audio_clip(title, chunk)
@@ -240,5 +253,5 @@ def parse_audio_clip(title, chunk):
 
     # Validate
     if pronunciation and language:
-        return text, language, pronunciation
+        return text, language, "", pronunciation
     return None

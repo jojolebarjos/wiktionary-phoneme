@@ -18,6 +18,7 @@ ipa_r = re.compile(r"\{\{IPA\|\/([^\/]*)\/.*?(?:lang=([^\}]*))?\}\}")
 
 
 def parse(title, content):
+    # TODO handle tags
 
     for line in content.split("\n"):
 
@@ -26,4 +27,4 @@ def parse(title, content):
             pronunciation = match.group(1)
             language = match.group(2) or ''
             # TODO check that pronunciation is always associated to title
-            yield title, language, pronunciation
+            yield title, language, "", pronunciation
