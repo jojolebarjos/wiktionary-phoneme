@@ -109,7 +109,7 @@ import regex as re
 #
 
 h3_r = re.compile(r"^===\s*\{\{S\|([^\|\}]*)")
-pron_long_r = re.compile(r"^\s*'''([^\{]*)'''\s*\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}")
+pron_long_r = re.compile(r"\s*'''([^\{]*)'''\s*(?:\{\{[^}]*\}\})?\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}")
 comment_r = re.compile(r"<!\-\-.*?\-\->", re.DOTALL)
 bracket_r = re.compile(r"\{\{|\}\}")
 ecouter_r = re.compile(r"\{\{écouter\|")

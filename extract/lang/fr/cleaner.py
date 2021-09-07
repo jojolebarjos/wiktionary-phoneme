@@ -14,12 +14,10 @@ TEXT_REPLACEMENT = {
 
     # Unify symbols
     "&amp;": "&",
-    
-    # TODO split ligatures? æ, œ
 }
 
 
-TEXT_WHITELIST = " .,-'aàâäbcçdeéèêëfghiîïjklmnoôöpqrstuùûüvwxyz"
+TEXT_WHITELIST = " .,-'aàâäæbcçdeéèêëfghiîïjklmnoôöœpqrstuùûüvwxyz"
 # TODO digits? about 750 entries
 # TODO uncommon symbols? e.g. &, €, +
 
