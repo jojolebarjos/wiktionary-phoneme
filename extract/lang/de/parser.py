@@ -1,4 +1,3 @@
-
 import regex as re
 
 
@@ -24,12 +23,12 @@ ipa_r = re.compile(r"\:\{\{IPA\}\}\s*\{\{Lautschrift\|([^\}]+)\}\}")
 
 # German names to ISO 639-1 Codes (used by Wikipedia)
 LANGUAGES = {
-    'Deutsch' : 'de',
-    'Englisch' : 'en',
-    'Französisch' : 'fr',
-    'Italienisch' : 'it',
-    'Latein' : 'la',
-    'Spanisch' : 'es',
+    "Deutsch": "de",
+    "Englisch": "en",
+    "Französisch": "fr",
+    "Italienisch": "it",
+    "Latein": "la",
+    "Spanisch": "es",
 }
 
 
@@ -38,7 +37,7 @@ def parse(title, content):
 
     language = ""
     for line in content.split("\n"):
-    
+
         # Check for header, update current word and language
         match = header_r.search(line)
         if match is not None:

@@ -1,4 +1,3 @@
-
 import regex as re
 
 
@@ -27,7 +26,7 @@ import regex as re
 # The most common template for pronunciation (may be empty):
 #   {{pron|u.vʁaʒ|fr}}
 #   {{pron||ko-Hani}}
-#   
+#
 # Possibly with prefixed text:
 #   '''penguin''' {{pron|ˈpɛŋ.ɡwɪn|en}}
 #   '''ouvrage''' {{pron|u.vʁaʒ|fr}}
@@ -44,7 +43,7 @@ import regex as re
 #
 # Note that close templates are used in the same way:
 #   {{phon|ʁɛ̃ːn|fr}}
-#   '''miellat''' {{phono|ˈmie̯lːɑt|se}} 
+#   '''miellat''' {{phono|ˈmie̯lːɑt|se}}
 #
 # Finally, note that some expansion might be attached:
 #   '''al''' {{prononcé|année-lumière|fr}} {{pron|a.ne ly.mjɛʁ|fr}} {{f}}.
@@ -67,7 +66,7 @@ import regex as re
 #
 
 
-# 
+#
 # Part-of-speech is often specified as well, possibly including one or multiple pronunciations:
 #   {{fr-rég|sjɛʒ}}
 #   {{fr-inv|se.de.ʁɔm|sp=1}}
@@ -109,7 +108,9 @@ import regex as re
 #
 
 h3_r = re.compile(r"^===\s*\{\{S\|([^\|\}]*)")
-pron_long_r = re.compile(r"\s*'''([^\{]*)'''\s*(?:\{\{[^}]*\}\})?\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}")
+pron_long_r = re.compile(
+    r"\s*'''([^\{]*)'''\s*(?:\{\{[^}]*\}\})?\{\{(?:pron|phon|phono)\|([^\|]*)\|([^\}]*)\}\}"
+)
 comment_r = re.compile(r"<!\-\-.*?\-\->", re.DOTALL)
 bracket_r = re.compile(r"\{\{|\}\}")
 ecouter_r = re.compile(r"\{\{écouter\|")
@@ -146,7 +147,7 @@ def from_any(title, content):
     """Collect from relevant templates."""
 
     yield from from_entries(title, content)
-    #yield from from_audio_clips(title, content)
+    # yield from from_audio_clips(title, content)
 
 
 def from_entries(title, content):
@@ -238,7 +239,7 @@ def parse_audio_clip(title, chunk):
     # Get arguments
     index = 0
     kwargs = {}
-    for part in inner.split('|'):
+    for part in inner.split("|"):
         match = argument_r.fullmatch(part)
         if match is None:
             index += 1

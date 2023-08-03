@@ -1,4 +1,3 @@
-
 import regex as re
 
 
@@ -25,6 +24,6 @@ def parse(title, content):
         match = ipa_r.search(line)
         if match is not None:
             pronunciation = match.group(1)
-            language = match.group(2) or ''
+            language = match.group(2) or ""
             # TODO check that pronunciation is always associated to title
             yield title, language, "", pronunciation

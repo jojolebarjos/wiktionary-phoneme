@@ -1,4 +1,3 @@
-
 import regex as re
 
 
@@ -26,12 +25,12 @@ def parse(title, content):
 
     language = ""
     for line in content.split("\n"):
-    
+
         # Check for header, update current word and language
         match = header_r.search(line)
         if match is not None:
             language = match.group(1)
-    
+
         # Check standard pronunciation definition
         match = ipa_r.search(line)
         if match is not None:

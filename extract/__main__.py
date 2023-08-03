@@ -1,4 +1,3 @@
-
 import argparse
 import io
 
@@ -17,15 +16,15 @@ parser = argparse.ArgumentParser(description="Extract IPA from Wiktionary dump")
 parser.add_argument("input")
 parser.add_argument("output")
 parser.add_argument("--language", "-l", nargs="?", help="Wikipedia language code")
-parser.add_argument("--raw", "-r", action="store_true", help="Disable cleaning procedure")
+parser.add_argument("--raw", "-r", action="store_true", help="Disable cleaning step")
 
 args = parser.parse_args()
 
 # Try to infer language from name
 if args.language is None:
-    match = re.match(r'^(\w+)wiktionary', args.input)
+    match = re.match(r"^(\w+)wiktionary", args.input)
     if not match:
-        raise ValueError('Failed to infer language')
+        raise ValueError("Failed to infer language")
     args.language = match.group(1)
 
 parse = get_parser(args.language)

@@ -1,4 +1,3 @@
-
 import io
 
 from tqdm import tqdm
@@ -12,7 +11,7 @@ class tqdm_file(io.RawIOBase):
     Example:
         Uncompressed size for GZip files is unknown. It is useful to show a
         progress during processing, even if it is based on the compressed size:
-        
+
         >>> import io
         ... import gzip
         ...
@@ -24,7 +23,7 @@ class tqdm_file(io.RawIOBase):
         ...     with tqdm_file(compressed_file, total=size, unit="B", unit_scale=True, unit_divisor=1024) as wrapped_compressed_file:
         ...         with gzip.open(wrapped_compressed_file) as file:
         ...             file.read()
-    
+
     """
 
     def __init__(self, file, tqdm_func=tqdm, **kwargs):

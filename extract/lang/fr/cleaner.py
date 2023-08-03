@@ -1,17 +1,13 @@
-
 import regex as re
 
 
 TEXT_REPLACEMENT = {
-
     # Unify whitespace
     "\xa0": " ",
     "&nbsp;": " ",
-
     # Unify apostrophes
     "’": "'",
     "&#39;": "'",
-
     # Unify symbols
     "&amp;": "&",
 }
@@ -151,20 +147,18 @@ TAGS = {
 # Invert mapping
 TAG_MAPPING = {v: k for k, vs in TAGS.items() for v in vs}
 
+
 def clean_tag(tag):
     return TAG_MAPPING.get(tag.lower().strip(), "")
 
 
 IPA_REPLACEMENT = {
-    
     # Ignore stress marker (not sufficiently used)
     "ˈ": "",
     "'": "",
-    
     # Unify interpunct
-    '·': '.',
-    '-': '.',
-
+    "·": ".",
+    "-": ".",
     # Replace incorrect symbols with their IPA equivalent
     "à": "a",
     "ε": "ɛ",
@@ -177,7 +171,6 @@ IPA_REPLACEMENT = {
     "g": "ɡ",
     "ᴐ": "ɔ",
     # TODO "h": "ʔ",
-    
     # Tilde-related errors
     "ã": "ɑ\u0303",
     "\u0303ɑ": "ɑ\u0303",
@@ -192,37 +185,58 @@ IPA_WHITELIST = {
     # See
     #   https://en.wikipedia.org/wiki/French_phonology
     #   https://en.wikipedia.org/wiki/Help:IPA/French
-    
     # Punctuation
-    ' ',
-    '.',
-    'ː',
-    '\u203f',
-    '͡',
-    '(', ')',
-    
+    " ",
+    ".",
+    "ː",
+    "\u203f",
+    "͡",
+    "(",
+    ")",
     # Consonants
-    "m", "n", "ɲ", "ŋ",
-    "p", "t", "k",
-    "b", "d", "ɡ",
-    "f", "s", "ʃ",
-    "v", "z", "ʒ", "ʁ",
-    "l", "j",
-    "ɥ", "w",
-    
+    "m",
+    "n",
+    "ɲ",
+    "ŋ",
+    "p",
+    "t",
+    "k",
+    "b",
+    "d",
+    "ɡ",
+    "f",
+    "s",
+    "ʃ",
+    "v",
+    "z",
+    "ʒ",
+    "ʁ",
+    "l",
+    "j",
+    "ɥ",
+    "w",
     # Oral vowels
-    "i", "y", "u",
-    "e", "ø", "ə", "o",
-    "ɛ", "ɛː", "œ", "ɔ",
-    "a", "ɑ",
-    
+    "i",
+    "y",
+    "u",
+    "e",
+    "ø",
+    "ə",
+    "o",
+    "ɛ",
+    "ɛː",
+    "œ",
+    "ɔ",
+    "a",
+    "ɑ",
     # Nasal vowels
-    "ɛ̃", "œ̃", "ɔ̃",
+    "ɛ̃",
+    "œ̃",
+    "ɔ̃",
     "ɑ̃",
-    
     # Glottal sounds
-    "h", "ʔ",
-    
+    "h",
+    "ʔ",
     # TODO English?
     #   "ʌ", # just
     #   "ʊ", # hook, foot
@@ -239,6 +253,7 @@ def _list_to_regex(tokens):
         parts.append(token)
     pattern = "(?:" + "|".join(parts) + ")+"
     return re.compile(pattern)
+
 
 IPA_WHITELIST_R = _list_to_regex(IPA_WHITELIST)
 

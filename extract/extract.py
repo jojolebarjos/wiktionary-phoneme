@@ -1,4 +1,3 @@
-
 import io
 
 from tqdm import tqdm
@@ -20,7 +19,13 @@ def extract(input_file, output_file, parse, clean=None):
     input_file.seek(0)
 
     # Wrap with progress bar
-    with tqdm_file(input_file, total=size, unit="B", unit_scale=True, unit_divisor=1024) as input_file:
+    with tqdm_file(
+        input_file,
+        total=size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as input_file:
 
         # Make sure we got a file object as output
         if isinstance(output_file, str):

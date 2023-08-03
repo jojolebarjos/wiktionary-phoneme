@@ -1,4 +1,3 @@
-
 import bz2
 
 from lxml import etree
@@ -20,24 +19,24 @@ def iterate_dump(file):
 
             # Quick and dirty hack to disregard XML namespaces...
             tag = elem.tag
-            if '}' in tag:
-                tag = tag[tag.rindex('}') + 1:]
+            if "}" in tag:
+                tag = tag[tag.rindex("}") + 1 :]
 
             # Keep relevant information
-            if tag == 'title':
+            if tag == "title":
                 title = elem.text
-            elif tag == 'ns':
+            elif tag == "ns":
                 ns = elem.text
-            elif tag == 'text':
+            elif tag == "text":
                 text = elem.text
 
             # When a page is complete, export it
-            elif tag == 'page':
-                if title is not None and ns == '0' and text is not None:
+            elif tag == "page":
+                if title is not None and ns == "0" and text is not None:
                     yield title, text
                 title = None
                 ns = None
                 text = None
-        
+
                 # Free memory
                 del elem.getparent()[0]
